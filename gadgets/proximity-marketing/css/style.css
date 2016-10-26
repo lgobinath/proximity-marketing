@@ -1,0 +1,73 @@
+body {
+    width: 100%;
+    height: 100%;
+}
+
+#toppanel {
+    top: 0px;
+    width: 75%;
+    height: 60px;
+    position: absolute;
+    overflow: hidden;
+    padding: 5px;
+}
+
+#container {
+    top: 60px;
+    width: 75%;
+    position: absolute;
+}
+
+#floor {
+    display: table;
+    margin: 0 auto;
+}
+
+#rightpanel {
+    height: 100%;
+    width: 25%;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    float: right;
+    padding: 10px;
+    background-color: #2C2C2C !important;
+}
+
+#perspective-selector {
+    width: 100%;
+    top: 10px;
+}
+
+#controls {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 200px;
+    background: white;
+    border: 1px solid #ddd;
+}
+
+#round {
+    padding: 5px;
+}
+
+#buttons {
+    padding: 5px;
+}
+
+#buttons button {
+    width: 100%;
+}
+
+#whiteTitle {
+    color: white;
+}
+
+#customerModal {
+    width: 50%;
+    left: 0%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10%;
+}

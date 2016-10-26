@@ -1,0 +1,1 @@
+{"provider-conf" : {"streamName" : "org.wso2.realtime.analytics.stream.FloorDetails:1.0.0", "provider-name" : "realtime"}, "chart-conf" : {"key" : "floorId", "color" : "None", "grid" : "on", "maxLength" : "30", "gadget-name" : "Floor Details", "chart-name" : "table-chart"}}

@@ -1,0 +1,15 @@
+{
+    "floors": [{
+        "id": 1,
+        "name": "Floor 1",
+        "plan": "floor_1.json"
+    }, {
+        "id": 2,
+        "name": "Floor 2",
+        "plan": "floor_2.json"
+    }, {
+        "id": 3,
+        "name": "Floor 3",
+        "plan": "floor_3.json"
+    }]
+}

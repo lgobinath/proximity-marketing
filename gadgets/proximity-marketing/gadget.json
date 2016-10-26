@@ -1,0 +1,9 @@
+{
+    "id": "proximity-marketing",
+    "title": "Floor Details",
+    "type": "gadget",
+    "thumbnail": "gadget/proximity-marketing/thumbnail.png",
+    "data": {
+        "url": "gadget/proximity-marketing/gadget.xml"
+    }
+}
