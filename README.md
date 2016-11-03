@@ -15,3 +15,5 @@ Configure MySQL username, password in [gadget-core.js](https://github.com/lgobin
 3. Send events to Coupons
 4. Open the dashboard
 5. Start sending events to Location
+
+Tested CEP: 4.2.1-SNAPSHOT
