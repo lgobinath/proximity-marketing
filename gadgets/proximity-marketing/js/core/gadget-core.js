@@ -29,6 +29,9 @@ var refreshInterval;
 var providerData;
 var REFRESH_INTERVAL = 'refreshInterval';
 
+var MYSQL_USERNAME = "root";
+var MYSQL_PASSWORD = "root";
+
 var init = function() {
 
     // Alert
@@ -72,11 +75,11 @@ var getItemDetails = function(floorNumber) {
     itemConf = {
         "provider-conf": {
             "db_url": "jdbc:mysql://localhost:3306/realtime_analytics_beacon",
-            "password": "root",
+            "password": MYSQL_PASSWORD,
             "provider-name": "rdbms",
             "query": "SELECT name, shelfNumber FROM ORG_WSO2_REALTIME_ANALYTICS_EVENT_TABLE_ITEM WHERE floorNumber = " + floorNumber,
             "table_name": "ORG_WSO2_REALTIME_ANALYTICS_EVENT_TABLE_ITEM",
-            "username": "root"
+            "username": MYSQL_USERNAME
         }
     };
 
@@ -97,11 +100,11 @@ var getPeopleHistory = function(query) {
     historyConf = {
         "provider-conf": {
             "db_url": "jdbc:mysql://localhost:3306/realtime_analytics_beacon",
-            "password": "root",
+            "password": MYSQL_PASSWORD,
             "provider-name": "rdbms",
             "query": query,
             "table_name": "ORG_WSO2_REALTIME_ANALYTICS_EVENT_TABLE_PEOPLE",
-            "username": "root"
+            "username": MYSQL_USERNAME
         }
     };
 
