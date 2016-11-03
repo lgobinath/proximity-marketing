@@ -12,51 +12,14 @@
     <Content type="html">
         <![CDATA[
         <head>
-            <!-- shared css -->
-            
-             <!-- <link href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css" rel="stylesheet" type="text/css" > -->
-            
+
+            <!-- CSS Style sheets -->
              <!-- <link href="/portal/libs/analytics-wso2-2.0.0/common.css" rel="stylesheet" type="text/css" > -->
             
-            <!-- CSS Style sheets -->
             <link rel="stylesheet" href="css/reset.css" type="text/css">
             <link rel="stylesheet" href="css/style.css" type="text/css">
-                <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
-            <!-- <link href="css/dataTables.bootstrap.min.css" rel="stylesheet" type="text/css"> -->
-            
-
-            <!-- jQuery -->
-            <!-- <script src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js"></script> -->
-            <!-- provider libs -->
-            
-            
-            
-            <!-- shared libs -->
-            
-            <!-- <script src="/portal/libs/analytics-wso2-2.0.0/d3.min.js"></script> -->
-            
-            <!-- <script src="/portal/libs/analytics-wso2-2.0.0/vega.js"></script> -->
-            
-            <!-- <script src="/portal/libs/analytics-wso2-2.0.0/VizGrammar.min.js"></script> -->
-            
-            <!-- <script src="/portal/libs/analytics-wso2-2.0.0/wso2gadgets.js"></script> -->
-            
-            <!-- <script src="/portal/libs/analytics-wso2-2.0.0/chart-utils.js"></script> -->
-            
-            <!-- chart specific vendor libs -->
-            
-            <!-- chart specific js -->
-            
-            <!-- <script src="js/jquery.dataTables.min.js"></script> -->
-            
-            <!--scripts copied by framework -->
-            
-            
-
-            <!-- <script src="js/core/provider-client.js"></script> -->
-            <!-- <script src="js/core/gadget-util.js"></script> -->
-            <!-- <script src="js/core/table-chart-api.js"></script> -->
-            <!-- <script src="js/core/gadget-core.js"></script> -->
+            <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+            <link rel="stylesheet" href="css/bootstrap-slider.min.css" type="text/css">
 
         </head>
         <body>
@@ -70,10 +33,14 @@
                 <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <!-- These values are used in proximity-core.js. Changing the text requires modification in proximity-core.js as well -->
                 <li><a href="#" data-value="movement">Customer movements</a></li>
                 <li><a href="#" data-value="heatmap">Heatmap of customers</a></li>
+                <li><a href="#" data-value="history">History of movements</a></li>
             </ul>
         </div>
+
+        <input id="time-slider" data-slider-id='slider' type="text" data-slider-min="0" data-slider-max="59" data-slider-step="1" data-slider-value="12"/>
         <hr>
         <!-- Floor selector -->
         <div class="panel-group" id="accordion">
@@ -86,28 +53,25 @@
         <!-- Alert -->
         <div class="alert alert-success fade in" id="alert-success" style="display:none;">
             <a href="#" class="close" aria-label="close">&times;</a>
-            <strong>Success!</strong> Indicates a successful or positive action.
+            <div class="message"><strong>Success!</strong> Indicates a successful or positive action.</div>
         </div>
         <div class="alert alert-info fade in" id="alert-info" style="display:none;">
             <a href="#" class="close" aria-label="close">&times;</a>
-            <strong>Info!</strong> Indicates a neutral informative change or action.
+            <div class="message"><strong>Info!</strong> Indicates a neutral informative change or action.</div>
         </div>
         <div class="alert alert-warning fade in" id="alert-warning" style="display:none;">
             <a href="#" class="close" aria-label="close">&times;</a>
-            <strong>Warning!</strong> Indicates a warning that might need attention.
+            <div class="message"><strong>Warning!</strong> Indicates a warning that might need attention.</div>
         </div>
         <div class="alert alert-danger fade in" id="alert-danger" style="display:none;">
             <a href="#" class="close" aria-label="close">&times;</a>
-            <strong>Danger!</strong> Indicates a dangerous or potentially negative action.
+            <div class="message"><strong>Danger!</strong> Indicates a dangerous or potentially negative action.</div>
         </div>
     </div>
     <!-- Main container which contains the floor map -->
     <div id="container">
         <!-- Canvas -->
         <canvas id="floor" width="100" height="100"></canvas>
-        <!-- <div style="display:none;">
-            <img id="customerIcon" src="img/customer.png" width="12" height="32">
-        </div> -->
         <div class="modal fade" id="customerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -126,17 +90,19 @@
         </div>
     </div>
 
-        <script src="js/jquery-3.1.1.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="js/simpleheat.js"></script>
-        <script src="js/proximity-core.js"></script>
-            
-        <script src="js/provider-libs/ws-client.js"></script>
-        <script src="js/core/provider-client.js"></script>
-        <script src="js/core/gadget-util.js"></script>
-        <script src="js/core/table-chart-api.js"></script>
-        <script src="js/core/gadget-core.js"></script>
-        </body>
+    <!-- JavaScript libraries -->
+    <script src="js/lib/jquery-3.1.1.min.js"></script>
+    <script src="js/lib/bootstrap.min.js"></script>
+    <script src="js/lib/bootstrap-slider.min.js"></script>
+    <script src="js/lib/simpleheat.js"></script>
+       
+    <script src="js/provider-libs/ws-client.js"></script>
+    <script src="js/core/provider-client.js"></script>
+    <script src="js/core/gadget-util.js"></script>
+    <script src="js/core/gadget-core.js"></script>
+
+    <script src="js/proximity-core.js"></script>
+    </body>
         ]]>
     </Content>
 </Module>

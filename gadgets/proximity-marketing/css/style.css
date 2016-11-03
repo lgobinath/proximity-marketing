@@ -71,3 +71,9 @@ body {
     margin-right: auto;
     margin-top: 10%;
 }
+
+#slider {
+    top: 20px;
+    width: 100%;
+    display: none;
+}

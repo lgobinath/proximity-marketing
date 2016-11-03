@@ -17,30 +17,23 @@
 
 (function() {
 
-    var callback;
-
     /**
      * TODO Need to read hostname,port, and tenantId from providerConfig
      * @param providerConfig
      * @param schema
      */
-    registerCallBackforPush = function(providerConfig, schema, _callback) {
+    registerCallBackforPush = function(providerConfig, schema, callback) {
         var streamId = providerConfig['streamName'];
         var hostname = window.parent.location.hostname;
         var port = window.parent.location.port;
 
         subscribe(streamId.split(":")[0], streamId.split(":")[1],
             '10',
-            onData, onError,
+            callback, onError,
             hostname,
             port,
             'WEBSOCKET'
         );
-        callback = _callback;
-    };
-
-    function onData(streamId, data) {
-        callback(data);
     };
 
     function onError(error) {
