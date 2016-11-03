@@ -1,0 +1,32 @@
+{
+  "name": "org.wso2.realtime.analytics.stream.Coupon",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "Details of new coupons which includes coupon name, description and expiration date",
+  "payloadData": [
+    {
+      "name": "id",
+      "type": "STRING"
+    },
+    {
+      "name": "name",
+      "type": "STRING"
+    },
+    {
+      "name": "description",
+      "type": "STRING"
+    },
+    {
+      "name": "expirationDate",
+      "type": "LONG"
+    },
+    {
+      "name": "itemId",
+      "type": "STRING"
+    },
+    {
+      "name": "minPurchase",
+      "type": "DOUBLE"
+    }
+  ]
+}

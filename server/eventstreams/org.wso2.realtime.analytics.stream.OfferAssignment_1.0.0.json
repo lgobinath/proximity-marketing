@@ -1,0 +1,16 @@
+{
+  "name": "org.wso2.realtime.analytics.stream.OfferAssignment",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "Update the offer of the given item by the given offer id",
+  "payloadData": [
+    {
+      "name": "itemId",
+      "type": "STRING"
+    },
+    {
+      "name": "offerId",
+      "type": "STRING"
+    }
+  ]
+}

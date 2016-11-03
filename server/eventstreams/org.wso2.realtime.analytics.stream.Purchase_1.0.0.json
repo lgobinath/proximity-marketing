@@ -1,0 +1,34 @@
+{
+  "name": "org.wso2.realtime.analytics.stream.Purchase",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "Details of each individual payments. userId is assumed as deviceId",
+  "metaData": [
+    {
+      "name": "userId",
+      "type": "STRING"
+    },
+    {
+      "name": "timestamp",
+      "type": "LONG"
+    }
+  ],
+  "payloadData": [
+    {
+      "name": "itemId",
+      "type": "STRING"
+    },
+    {
+      "name": "itemQuantity",
+      "type": "INT"
+    },
+    {
+      "name": "offerId",
+      "type": "STRING"
+    },
+    {
+      "name": "amount",
+      "type": "DOUBLE"
+    }
+  ]
+}

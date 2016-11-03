@@ -1,0 +1,86 @@
+@Plan:name('RealtimeAnalytics-ExecutionPlan-EventPersistence')
+
+@Plan:description('Persist events to event table')
+
+@Import('org.wso2.realtime.analytics.stream.Item:1.0.0')
+define stream ItemStream (id string, name string, category string, floorNumber int, shelfNumber int, offerId string);
+
+@Import('org.wso2.realtime.analytics.stream.Offer:1.0.0')
+define stream OfferStream (id string, name string, description string, expirationDate long);
+
+@Import('org.wso2.realtime.analytics.stream.Coupon:1.0.0')
+define stream CouponStream (id string, name string, description string, expirationDate long, itemId string, minPurchase double);
+
+@Import('org.wso2.realtime.analytics.stream.OfferAssignment:1.0.0')
+define stream OfferAssignmentStream (itemId string, offerId string);
+
+@Import('org.wso2.realtime.analytics.stream.Customer:1.0.0')
+define stream CustomerStream (id string, name string, sex string, dob string);
+
+@Import('org.wso2.realtime.analytics.stream.PeopleLocation:1.0.0')
+define stream PeopleStream (meta_timestamp long, id string, floorNumber int, shelfNumber int);
+
+@IndexBy('id')
+@From(eventtable='rdbms', datasource.name='WSO2_REALTIME_ANALYTICS_BEACON', table.name='ORG_WSO2_REALTIME_ANALYTICS_EVENT_TABLE_ITEM')
+define table ItemEventTable (id string, name string, category string, floorNumber int, shelfNumber int, offerId string);
+
+@IndexBy('id')
+@From(eventtable='rdbms', datasource.name='WSO2_REALTIME_ANALYTICS_BEACON', table.name='ORG_WSO2_REALTIME_ANALYTICS_EVENT_TABLE_OFFER')
+define table OfferEventTable (id string, name string, description string, expirationDate long);
+
+@IndexBy('id')
+@From(eventtable='rdbms', datasource.name='WSO2_REALTIME_ANALYTICS_BEACON', table.name='ORG_WSO2_REALTIME_ANALYTICS_EVENT_TABLE_COUPON')
+define table CouponEventTable (id string, name string, description string, expirationDate long, itemId string, minPurchase double);
+
+/*@From(eventtable='rdbms', datasource.name='WSO2_REALTIME_ANALYTICS_BEACON', table.name='ORG_WSO2_REALTIME_ANALYTICS_EVENT_TABLE_PURCHASE')
+define table PurchaseEventTable (userId string, timestamp long, itemId string, itemQuantity int, offerId string, amount double);*/
+
+@IndexBy('id')
+@From(eventtable='rdbms', datasource.name='WSO2_REALTIME_ANALYTICS_BEACON', table.name='ORG_WSO2_REALTIME_ANALYTICS_EVENT_TABLE_CUSTOMER')
+define table CustomerEventTable (id string, name string, sex string, dob string, isPremium bool);
+
+@IndexBy('id')
+@From(eventtable='rdbms', datasource.name='WSO2_REALTIME_ANALYTICS_BEACON', table.name='ORG_WSO2_REALTIME_ANALYTICS_EVENT_TABLE_PEOPLE')
+define table PeopleEventTable (year int, month int, day int, hour int, minute int, id string, floorNumber int, shelfNumber int);
+
+/*@From(eventtable='rdbms', datasource.name='WSO2_REALTIME_ANALYTICS_BEACON', table.name='ORG_WSO2_REALTIME_ANALYTICS_EVENT_TABLE_PAYMENT')
+define table PaymentEventTable (userId string, timestamp long, itemId string, itemQuantity int, offerId string, amount double, minute int, hour int, day int, month int, year int);*/
+
+from ItemStream
+insert overwrite ItemEventTable
+on ItemEventTable.id == id;
+
+from OfferStream
+insert overwrite OfferEventTable
+on OfferEventTable.id == id;
+
+from CouponStream
+insert overwrite CouponEventTable
+on CouponEventTable.id == id;
+
+from OfferAssignmentStream as offer join ItemEventTable as item on offer.itemId == item.id
+select item.id as id, item.name as name, item.category as category, item.floorNumber as floorNumber, item.shelfNumber as shelfNumber, offer.offerId as offerId
+insert overwrite ItemEventTable
+on ItemEventTable.id == id;
+
+/*from PurchaseStream
+select meta_userId as userId, meta_timestamp as timestamp, itemId, itemQuantity, offerId, amount
+insert overwrite PurchaseEventTable
+on PurchaseEventTable.userId == userId AND PurchaseEventTable.timestamp == timestamp;*/
+
+from CustomerStream
+select id, name, sex, dob, false as isPremium
+insert overwrite CustomerEventTable
+on CustomerEventTable.id == id;
+
+from PeopleStream#window.uniqueExternalTimeBatch(id, meta_timestamp, 1 minute)
+select time:extract(preState.meta_timestamp, 'year') as year, time:extract(preState.meta_timestamp, 'month') as month, time:extract(preState.meta_timestamp, 'day') as day, time:extract(preState.meta_timestamp, 'hour') as hour, time:extract(preState.meta_timestamp, 'minute') as minute, id, floorNumber, shelfNumber
+insert overwrite PeopleEventTable
+on PeopleEventTable.year == year and PeopleEventTable.month == month and PeopleEventTable.day == day and PeopleEventTable.hour == hour and PeopleEventTable.minute == minute and PeopleEventTable.id == id; 
+
+/** Insert the total payments made per minute for every items **/
+/*from PurchaseStream#window.timeBatch(1 min)
+select meta_userId as userId, meta_timestamp as timestamp, itemId, itemQuantity, offerId, sum(amount) as amount, time:extract(meta_timestamp, 'minute') as minute, time:extract(meta_timestamp, 'hour') as hour, time:extract(meta_timestamp, 'day') as day,  time:extract(meta_timestamp, 'month') as month, time:extract(meta_timestamp, 'year') as year
+group by meta_userId, itemId
+insert overwrite PaymentEventTable
+on PaymentEventTable.userId == userId AND PaymentEventTable.itemId == itemId AND PaymentEventTable.minute == minute AND PaymentEventTable.hour == hour AND PaymentEventTable.day == day AND PaymentEventTable.month == month AND PaymentEventTable.year == year;*/

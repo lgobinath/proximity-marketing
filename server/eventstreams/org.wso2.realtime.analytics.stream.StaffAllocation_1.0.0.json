@@ -1,0 +1,26 @@
+{
+  "name": "org.wso2.realtime.analytics.stream.StaffAllocation",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "Notifes the branch manager to allocate a staff for the given customer",
+  "metaData": [
+    {
+      "name": "timestamp",
+      "type": "LONG"
+    }
+  ],
+  "payloadData": [
+    {
+      "name": "userId",
+      "type": "STRING"
+    },
+    {
+      "name": "floorNumber",
+      "type": "INT"
+    },
+    {
+      "name": "doorNumber",
+      "type": "INT"
+    }
+  ]
+}

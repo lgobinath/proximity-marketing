@@ -1,0 +1,32 @@
+{
+  "name": "org.wso2.realtime.analytics.stream.Item",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "Details of items available in the shop",
+  "payloadData": [
+    {
+      "name": "id",
+      "type": "STRING"
+    },
+    {
+      "name": "name",
+      "type": "STRING"
+    },
+    {
+      "name": "category",
+      "type": "STRING"
+    },
+    {
+      "name": "floorNumber",
+      "type": "INT"
+    },
+    {
+      "name": "shelfNumber",
+      "type": "INT"
+    },
+    {
+      "name": "offerId",
+      "type": "STRING"
+    }
+  ]
+}

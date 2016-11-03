@@ -1,0 +1,34 @@
+{
+  "name": "org.wso2.realtime.analytics.stream.SendOffer",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "Identified offers to promote for a given product and person",
+  "metaData": [
+    {
+      "name": "userId",
+      "type": "STRING"
+    },
+    {
+      "name": "timestamp",
+      "type": "LONG"
+    }
+  ],
+  "payloadData": [
+    {
+      "name": "productName",
+      "type": "STRING"
+    },
+    {
+      "name": "offerName",
+      "type": "STRING"
+    },
+    {
+      "name": "offerDescription",
+      "type": "STRING"
+    },
+    {
+      "name": "expirationDate",
+      "type": "LONG"
+    }
+  ]
+}

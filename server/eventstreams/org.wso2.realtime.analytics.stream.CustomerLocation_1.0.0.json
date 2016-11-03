@@ -1,0 +1,26 @@
+{
+  "name": "org.wso2.realtime.analytics.stream.CustomerLocation",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "Details of current location of customers",
+  "metaData": [
+    {
+      "name": "timestamp",
+      "type": "LONG"
+    }
+  ],
+  "payloadData": [
+    {
+      "name": "customerId",
+      "type": "STRING"
+    },
+    {
+      "name": "floorNumber",
+      "type": "INT"
+    },
+    {
+      "name": "shelfNumber",
+      "type": "INT"
+    }
+  ]
+}

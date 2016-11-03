@@ -1,0 +1,26 @@
+{
+  "name": "org.wso2.realtime.analytics.stream.Location",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "Proximity details of the user sent by smart device of the user",
+  "metaData": [
+    {
+      "name": "userId",
+      "type": "STRING"
+    },
+    {
+      "name": "timestamp",
+      "type": "LONG"
+    }
+  ],
+  "payloadData": [
+    {
+      "name": "majorValue",
+      "type": "INT"
+    },
+    {
+      "name": "minorValue",
+      "type": "INT"
+    }
+  ]
+}

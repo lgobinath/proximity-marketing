@@ -1,0 +1,20 @@
+@Plan:name('RealtimeAnalytics-ExecutionPlan-AlertGenerator')
+
+@Plan:description('Create alerts for events triggered by the system')
+
+@Import('org.wso2.realtime.analytics.stream.SendCoupon:1.0.0')
+define stream CouponStream (meta_timestamp long, userId string, couponName string, couponDescription string, validityPeriod string);
+
+@Import('org.wso2.realtime.analytics.stream.SendOffer:1.0.0')
+define stream OfferStream (meta_userId string, meta_timestamp long, productName string, offerName string, offerDescription string, expirationDate long);
+
+@Export('org.wso2.realtime.analytics.stream.Alert:1.0.0')
+define stream AlertStream (type string, title string, message string);
+
+from OfferStream
+select 'info' as type, 'Sending Offer' as title, str:concat('Sending offer ', offerName, ' for ', productName, ' to ', meta_userId) as message
+insert into AlertStream;
+
+from CouponStream
+select 'info' as type, 'Sending Coupon' as title, str:concat('Sending coupon ', couponName, ' to ', userId) as message
+insert into AlertStream;

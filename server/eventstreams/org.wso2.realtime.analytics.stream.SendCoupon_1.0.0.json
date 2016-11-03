@@ -1,0 +1,30 @@
+{
+  "name": "org.wso2.realtime.analytics.stream.SendCoupon",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "Send coupon offers after purchase",
+  "metaData": [
+    {
+      "name": "timestamp",
+      "type": "LONG"
+    }
+  ],
+  "payloadData": [
+	{
+      "name": "userId",
+      "type": "STRING"
+    },
+    {
+      "name": "couponName",
+      "type": "STRING"
+    },
+    {
+      "name": "couponDescription",
+      "type": "STRING"
+    },
+    {
+      "name": "validityPeriod",
+      "type": "STRING"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+@Plan:name('RealtimeAnalytics-ExecutionPlan-ExtractLocationDetails')
+
+@Plan:description('Extract the necessary location details from the location stream')
+
+@Import('org.wso2.realtime.analytics.stream.Location:1.0.0')
+define stream LocationStream (meta_userId string, meta_timestamp long, majorValue int, minorValue int);
+
+@Export('org.wso2.realtime.analytics.stream.CustomerLocation:1.0.0')
+define stream CustomerStream (meta_timestamp long, customerId string, floorNumber int, shelfNumber int);
+
+@Export('org.wso2.realtime.analytics.stream.PeopleLocation:1.0.0')
+define stream PeopleStream (meta_timestamp long, id string, floorNumber int, shelfNumber int);
+
+@IndexBy('id')
+@From(eventtable='rdbms', datasource.name='WSO2_REALTIME_ANALYTICS_BEACON', table.name='ORG_WSO2_REALTIME_ANALYTICS_EVENT_TABLE_ITEM')
+define table ItemEventTable (id string, name string, category string, floorNumber int, shelfNumber int, offerId string);
+
+/*from LocationStream as location left outer join ItemEventTable as item on location.majorValue == item.floorNumber and location.minorValue == item.shelfNumber
+select location.meta_timestamp as meta_timestamp, location.meta_userId as id, item.name as itemName, location.majorValue as floorNumber, location.minorValue as shelfNumber
+insert into PeopleStream;*/
+
+from LocationStream
+select meta_timestamp, meta_userId as id, majorValue as floorNumber, minorValue as shelfNumber
+insert into PeopleStream;
+
+
+from PeopleStream[not str:contains(id, "staff-")]
+select meta_timestamp, id as customerId, floorNumber, shelfNumber
+insert into CustomerStream;

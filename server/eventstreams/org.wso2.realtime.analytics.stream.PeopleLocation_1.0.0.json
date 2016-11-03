@@ -1,0 +1,26 @@
+{
+  "name": "org.wso2.realtime.analytics.stream.PeopleLocation",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "Details of current location of people",
+  "metaData": [
+    {
+      "name": "timestamp",
+      "type": "LONG"
+    }
+  ],
+  "payloadData": [
+    {
+      "name": "id",
+      "type": "STRING"
+    },
+    {
+      "name": "floorNumber",
+      "type": "INT"
+    },
+    {
+      "name": "shelfNumber",
+      "type": "INT"
+    }
+  ]
+}

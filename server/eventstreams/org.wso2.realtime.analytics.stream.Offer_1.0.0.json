@@ -1,0 +1,24 @@
+{
+  "name": "org.wso2.realtime.analytics.stream.Offer",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "Details of new offers which includes offer name, description and expiration date",
+  "payloadData": [
+    {
+      "name": "id",
+      "type": "STRING"
+    },
+    {
+      "name": "name",
+      "type": "STRING"
+    },
+    {
+      "name": "description",
+      "type": "STRING"
+    },
+    {
+      "name": "expirationDate",
+      "type": "LONG"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+@Plan:name(' RealtimeAnalytics-ExecutionPlan-PurchaseProcessor')
+
+@Plan:description('Process the purchase events and predict the premium customers and coupon distribution')
+
+/* Input stream containing purchase events */
+@Import('org.wso2.realtime.analytics.stream.Purchase:1.0.0')
+define stream PurchaseStream (meta_userId string, meta_timestamp long, itemId string, itemQuantity int, offerId string, amount double);
+
+/* Output stream contains the coupon details and the id of the customer to whom the copoun is given */
+@Export('org.wso2.realtime.analytics.stream.SendCoupon:1.0.0')
+define stream SendCouponStream (meta_timestamp long, userId string, couponName string, couponDescription string, validityPeriod string);
+
+/* The event table which contains coupon details. Used to send coupons based on payments */
+@IndexBy('id')
+@From(eventtable='rdbms', datasource.name='WSO2_REALTIME_ANALYTICS_BEACON', table.name='ORG_WSO2_REALTIME_ANALYTICS_EVENT_TABLE_COUPON')
+define table CouponEventTable (id string, name string, description string, expirationDate long, itemId string, minPurchase double);
+
+/* The event table which contains customer details. The isPremium column is updated in this exexution plan */
+@From(eventtable='rdbms', datasource.name='WSO2_REALTIME_ANALYTICS_BEACON', table.name='ORG_WSO2_REALTIME_ANALYTICS_EVENT_TABLE_CUSTOMER')
+define table CustomerEventTable (id string, name string, sex string, dob string, isPremium bool);
+
+/*partition with(meta_userId of PurchaseStream)
+begin*/
+	/* Extract the purchases higher than 5000.00 */
+	from PurchaseStream[amount >= 5000.00]
+	insert into #FilteredPurchaseStream;
+	
+	/* Send coupons for purchases higher than 5000.00 */
+	from #FilteredPurchaseStream as purchase join CouponEventTable as coupon on purchase.itemId == coupon.itemId AND purchase.amount >= coupon.minPurchase AND coupon.expirationDate >= purchase.meta_timestamp
+	select purchase.meta_timestamp as meta_timestamp, purchase.meta_userId as userId, coupon.name as couponName, coupon.description as couponDescription, time:dateFormat(coupon.expirationDate, 'yyyy-MM-dd') as validityPeriod
+	insert into SendCouponStream;
+	
+	/* If a user buys more than 5000.00 atleast 3 times in a month, he/she is a premium customer */
+	/* For testing purpose, 1 minute window is used here */
+	from #FilteredPurchaseStream#window.timeBatch(1 minute)
+	select meta_userId as id, (count(*) >= 3) as isPremium
+	insert into #CustomerStatusStream;
+	
+	/* Filer only the premium customers */
+	from #CustomerStatusStream[isPremium]
+	select id
+	insert into #PremiumCustomerStream;
+	
+	/* Update the customer as premium customer in the event table */
+	from #PremiumCustomerStream as premium join CustomerEventTable on CustomerEventTable.id == premium.id
+	select CustomerEventTable.id as id, CustomerEventTable.name as name, CustomerEventTable.sex as sex, CustomerEventTable.dob as dob, true as isPremium
+	insert overwrite CustomerEventTable
+	on CustomerEventTable.id == id;
+/*end;*/

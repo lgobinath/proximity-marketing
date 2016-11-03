@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8"?><streamConfiguration type="csv"><file>coupon_data.csv</file><streamID>org.wso2.realtime.analytics.stream.Coupon:1.0.0</streamID><separateChar>,</separateChar><delayBetweenEventsInMilies>1</delayBetweenEventsInMilies></streamConfiguration>

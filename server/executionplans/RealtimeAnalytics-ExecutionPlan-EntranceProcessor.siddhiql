@@ -1,0 +1,68 @@
+@Plan:name('RealtimeAnalytics-ExecutionPlan-EntranceProcessor')
+
+@Plan:description('Process user arival')
+
+@Import('org.wso2.realtime.analytics.stream.Purchase:1.0.0')
+define stream PurchaseStream (meta_userId string, meta_timestamp long, itemId string, itemQuantity int, offerId string, amount double);
+
+@Import('org.wso2.realtime.analytics.stream.OfferOfTheDay:1.0.0')
+define stream OfferOfTheDayStream (id string, name string, description string, expirationDate long);
+
+@Import('org.wso2.realtime.analytics.stream.CustomerLocation:1.0.0')
+define stream CustomerLocationStream (meta_timestamp long, customerId string, floorNumber int, shelfNumber int);
+
+@Export('org.wso2.realtime.analytics.stream.SendOffer:1.0.0')
+define stream SendOfferStream (meta_userId string, meta_timestamp long, productName string, offerName string, offerDescription string, expirationDate long);
+
+@Export('org.wso2.realtime.analytics.stream.StaffAllocation:1.0.0')
+define stream StaffAllocationStream (meta_timestamp long, userId string, floorNumber int, doorNumber int);
+
+@IndexBy('id')
+@From(eventtable='rdbms', datasource.name='WSO2_REALTIME_ANALYTICS_BEACON', table.name='ORG_WSO2_REALTIME_ANALYTICS_EVENT_TABLE_CUSTOMER')
+define table CustomerEventTable (id string, name string, sex string, dob string, isPremium bool);
+
+@IndexBy('id')
+@From(eventtable='rdbms', datasource.name='WSO2_REALTIME_ANALYTICS_BEACON', table.name='ORG_WSO2_REALTIME_ANALYTICS_EVENT_TABLE_ITEM')
+define table ItemEventTable (id string, name string, category string, floorNumber int, shelfNumber int, offerId string);
+
+@IndexBy('id')
+@From(eventtable='rdbms', datasource.name='WSO2_REALTIME_ANALYTICS_BEACON', table.name='ORG_WSO2_REALTIME_ANALYTICS_EVENT_TABLE_OFFER')
+define table OfferEventTable (id string, name string, description string, expirationDate long);
+
+/* Assume that the entance is at (2, 2). It can be configured using event table if required */
+from CustomerLocationStream[floorNumber == 2 AND shelfNumber == 2]
+insert into #EntranceStream;
+
+/* Send offers only one time a day. This query adds a property saying whether this is the first entrance event happened in last 24 hours. For testing purpose, 5 minutes is used instead of 24 hours */
+from #EntranceStream as leftStream left outer join #EntranceStream#window.time(5 minutes) as rightStream on leftStream.customerId == rightStream.customerId AND leftStream.floorNumber == rightStream.floorNumber AND leftStream.shelfNumber == rightStream.shelfNumber
+select leftStream.customerId as userId, leftStream.meta_timestamp as timestamp, leftStream.floorNumber as floorNumber, leftStream.shelfNumber as doorNumber, rightStream.customerId IS NULL as isNewEvent
+insert into #EntrancePerDayStream;
+
+/* Send the first events only */
+from #EntrancePerDayStream[isNewEvent]
+insert into #VerifiedEntranceStream;
+
+/* Allocate a staff is the customer is a premium customer */
+from #VerifiedEntranceStream as entrance join CustomerEventTable as customer on entrance.userId == customer.id AND customer.isPremium == True
+select entrance.timestamp as meta_timestamp, entrance.userId as userId, entrance.floorNumber as floorNumber, entrance.doorNumber as doorNumber
+insert into StaffAllocationStream;
+
+/* Send offer of the day */
+from #VerifiedEntranceStream as entrance join OfferOfTheDayStream#window.time(24 hours) as offer
+select entrance.userId as meta_userId, entrance.timestamp as meta_timestamp, "Offer of the day" as productName, offer.name as offerName, offer.description as offerDescription, offer.expirationDate as expirationDate
+insert into SendOfferStream;
+
+/* Find 3 most frequently buying items of the customer */
+from #VerifiedEntranceStream as entrance join PurchaseStream#window.frequent(3, itemId) as purchase on entrance.userId == purchase.meta_userId
+select entrance.userId as userId, entrance.timestamp as timestamp, purchase.itemId as itemId
+insert into #FrequentlyBuyingItem;
+
+/* Check the available offers for the frequent items */
+from #FrequentlyBuyingItem as frequentItem join ItemEventTable as item on frequentItem.itemId == item.id AND item.offerId != "N/A"
+select frequentItem.userId as userId, frequentItem.timestamp as timestamp, item.name as productName, item.offerId as offerId
+insert into #OfferForFrequentlyBuyingItems;
+
+/* Validate offer expiary peiod and send the offer */
+from #OfferForFrequentlyBuyingItems as item join OfferEventTable as offer on item.offerId == offer.id AND item.timestamp <= offer.expirationDate
+select item.userId as meta_userId, item.timestamp as meta_timestamp, item.productName as productName, offer.name as offerName, offer.description as offerDescription, offer.expirationDate as expirationDate
+insert into SendOfferStream;
